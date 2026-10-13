@@ -1,0 +1,92 @@
+<main class="dashboard">
+  <header class="dashboard__header">
+    <div>
+      <p class="dashboard__eyebrow">Visão geral</p>
+      <h1>Usuários</h1>
+      <p class="dashboard__description">Consulte e filtre os usuários cadastrados.</p>
+    </div>
+
+    @if (!usersResource.isLoading() && !usersResource.error()) {
+      <div class="dashboard__summary" aria-label="Resumo de usuários">
+        <p><strong>{{ totalUsers() }}</strong> no total</p>
+        <p><strong>{{ activeUsers() }}</strong> ativos</p>
+      </div>
+    }
+  </header>
+
+  @if (usersResource.isLoading()) {
+    <p class="dashboard__message" role="status">Carregando usuários...</p>
+  } @else if (usersResource.error()) {
+    <p class="dashboard__message dashboard__message--error" role="alert">
+      Não foi possível carregar os usuários.
+    </p>
+    <button (click)="usersResource.reload()">
+      Tentar novamente
+    </button>
+  } @else if(usersResource.hasValue()) {
+    <section class="dashboard__panel" aria-label="Lista de usuários">
+      <div class="dashboard__toolbar">
+        <label class="dashboard__search">
+          <span>Buscar usuário</span>
+          <input
+            type="search"
+            placeholder="Digite um nome"
+            [value]="searchTerm()"
+            (input)="setSearchTerm($any($event.target).value)"
+          />
+        </label>
+
+        <label class="dashboard__filter">
+          <input
+            type="checkbox"
+            [checked]="showActiveOnly()"
+            (change)="toggleActiveOnly()"
+          />
+          <span>Somente ativos</span>
+        </label>
+      </div>
+
+      @if (filteredUsers().length > 0) {
+        <div class="dashboard__table-wrap">
+          <table>
+            <caption class="visually-hidden">Usuários cadastrados e seu status</caption>
+            <thead>
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of filteredUsers(); track user.id) {
+                <tr>
+                  <td>{{ user.name }}</td>
+                  <td>
+                    <span
+                      class="status"
+                      [class.status--active]="user.active"
+                      [class.status--inactive]="!user.active"
+                    >
+                      <span class="status__dot" aria-hidden="true"></span>
+                      {{ user.active ? 'Ativo' : 'Inativo' }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="dashboard__empty" role="status">
+          @if (totalUsers() === 0) {
+            Ainda não há usuários cadastrados.
+          } @else {
+            Nenhum usuário encontrado com esses filtros.
+          }
+        </p>
+      }
+    </section>
+    <button (click)="usersResource.reload()" class="dashboard__update-btn">
+      Atualizar usuários
+    </button>
+  }
+</main>
