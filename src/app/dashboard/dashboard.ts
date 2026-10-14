@@ -1,12 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { UserService } from '../services/user.service';
-
-export interface User {
-  id: number;
-  name: string;
-  active: boolean;
-}
+import { User } from '../utils/interfaces/user.interface';
 
 @Component({
   selector: 'app-dashboard',

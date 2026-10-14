@@ -1,0 +1,21 @@
+<section>
+  <label for="user-search">Buscar usuário</label>
+  <input
+    id="user-search"
+    type="search"
+    [formControl]="searchControl"
+    placeholder="Digite um nome..."
+  />
+
+  @if (error()) {
+    <p role="alert">{{ error() }}</p>
+  } @else {
+    <ul>
+      @for (user of users(); track user.id) {
+        <li>{{ user.name }}</li>
+      } @empty {
+        <li>Nenhum usuário encontrado.</li>
+      }
+    </ul>
+  }
+</section>

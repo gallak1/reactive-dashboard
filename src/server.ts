@@ -58,6 +58,31 @@ app.get('/api/users', async (req, res) => {
   ]);
 });
 
+
+app.get('/api/search/users', async (req, res) => {
+  // Simula latência de rede para testarmos o comportamento assíncrono.
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  const users = [
+    { id: 1, name: 'Gabriel', active: true },
+    { id: 2, name: 'João', active: false },
+    { id: 3, name: 'Maria', active: true },
+    { id: 4, name: 'Carlos', active: true },
+    { id: 5, name: 'Ana', active: false },
+  ];
+
+  const search = String(req.query['search'] ?? '')
+    .trim()
+    .toLowerCase();
+
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(search)
+  );
+
+  res.json(filteredUsers);
+});
+
+
 /**
  * Handle all other requests by rendering the Angular application.
  */
